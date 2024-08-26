@@ -1,0 +1,54 @@
+// // This is your Prisma schema file,
+// // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id                     Int  @id
+  name                   String @db.Char(120)
+  category               String @db.Char(5)
+  cnpj                   String @db.Char(24)
+  company_name           String @db.Char(120)
+  is_active              Boolean @default(false)
+  milvus_device_qty      Int @default(0)
+  bitdefender_device_qty Int @default(0)
+
+  Device Device[]
+}
+
+model Device {
+  id          Int     @id
+  name        String  @db.Char(100)
+  nickname    String  @db.Char(100)
+  mac         String  @db.Char(30)
+  brand       String  @db.Char(30)
+  os          String  @db.Char(60)
+  processor   String  @db.Char(100)
+  user        String  @db.Char(30)
+  serial      String  @db.Char(100)
+  model       String  @db.Char(100)
+  type        String  @db.Char(30)
+  is_active   Boolean @default(false)
+  last_update DateTime 
+  last_sync   DateTime @default(now())
+  client      Client? @relation(fields: [client_id], references: [id])
+  client_id   Int?
+}
+
+model User {
+  id       Int    @id
+  name     String @db.Char(100)
+  email    String @db.Char(100) @unique
+  password String @db.Char(100)
+  role     String @db.Char(10)
+}
